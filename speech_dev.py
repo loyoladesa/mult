@@ -75,13 +75,15 @@ def transcribe(CHUNK):
                     voice_recognizer = sr.Recognizer()
 
                     # Grava arquivo temporario para facilitar a transcrição
-                    arquivoTemporario = tempfile.TemporaryFile()
+                    #arquivoTemporario = tempfile.TemporaryFile()
+                    arquivoTemporario = 'output.wav'
+
                     with wave.open(arquivoTemporario, 'wb') as wf:
                         wf.setnchannels(CHANNELS)
                         wf.setsampwidth(2)
                         wf.setframerate(RATE)
                         wf.writeframes(b''.join(frames))
-                    arquivoTemporario.seek(0)
+                    #arquivoTemporario.seek(0)
 
                     #print("Arquivo Criado")
 
@@ -126,7 +128,7 @@ def transcribe(CHUNK):
                                 print(msg, flush=True)
                                 cont = 0'''
 
-                    arquivoTemporario.close()
+                   # arquivoTemporario.close()
 
 
 def send(mqtt_topic):
