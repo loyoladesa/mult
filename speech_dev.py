@@ -33,7 +33,7 @@ import wave
 from os import path
 import tempfile
 
-
+from speech_recognition import AudioFile
 
 frames = []
 logs = []
@@ -41,6 +41,7 @@ mode = ""
 
 #variável booleana de controle
 transcreveuAudio = False
+API_funcionou = True
 
 def udpStream(CHUNK, IP, PORT):
 
@@ -64,12 +65,14 @@ def transcribe(CHUNK):
 
     global frase
     global transcreveuAudio
+    global API_funcionou
 
     while True:
 
         if len(frames) == buffer:
+            print("buffer carregado")
 
-            while True:
+            while API_funcionou:
 
                     # Acessa a biblioteca SpeechRecognition
                     voice_recognizer = sr.Recognizer()
@@ -91,9 +94,9 @@ def transcribe(CHUNK):
                     with sr.AudioFile(arquivoTemporario) as source:
 
                         # Chama um algoritmo de reducao de ruidos no som
-                        voice_recognizer.adjust_for_ambient_noise(source)
+                        #voice_recognizer.adjust_for_ambient_noise(source)
 
-                        # print("Armazena o aúdio em uma variável")
+                        print("Armazena o aúdio em uma variável")
                         audio = voice_recognizer.record(source)
 
                     if (mode == "OFF"):
@@ -102,6 +105,7 @@ def transcribe(CHUNK):
                             frase = voice_recognizer.recognize_sphinx(audio)
                             print("Audio: " + frase, flush=True)
                             transcreveuAudio = True
+                            API_funcionou = False
                             frames.clear()
 
                         # Se nao reconheceu o padrao de fala registra no log
@@ -114,19 +118,17 @@ def transcribe(CHUNK):
 
                     else:
                         try:
-                            # Acessa a API
+                            print("Acessa a API Google")
                             frase = voice_recognizer.recognize_google(audio)
                             print("Audio: " + frase, flush=True)
                             transcreveuAudio = True
+                            API_funcionou = False
                             frames.clear()
 
                         # Se nao reconheceu o padrao de fala registra no log
                         except sr.UnknownValueError:
-                            msg = "Google could not understand audio"
-                            '''cont = cont +1
-                            if (cont == 10):
-                                print(msg, flush=True)
-                                cont = 0'''
+                            print("Google could not understand audio")
+
 
                    # arquivoTemporario.close()
 
